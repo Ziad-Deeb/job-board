@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Board</title>
+</head>
+<body>
+    <h1>Job Listings</h1>
+
+    <!-- Login/Logout Links -->
+    <div>
+        {% if user.is_authenticated %}
+            <p>Welcome, {{ user.username }}!</p>
+            <form method="post" action="/accounts/logout/">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
+        {% else %}
+            <a href="/accounts/login/">Login</a>
+            <a href="/accounts/signup/">Sign Up</a>
+        {% endif %}
+    </div>
+
+    <!-- Link to Create a New Job -->
+    <a href="create/">Create New Job</a>
+
+    <!-- Filtering Form -->
+    <form method="get" action="">
+        <input type="text" name="q" placeholder="Search by title" value="{{ query|default:'' }}">
+        <input type="text" name="location" placeholder="Filter by location" value="{{ location_filter|default:'' }}">
+        <input type="text" name="company" placeholder="Filter by company" value="{{ company_filter|default:'' }}">
+        <input type="number" name="min_salary" placeholder="Min salary" value="{{ min_salary|default:'' }}">
+        <input type="number" name="max_salary" placeholder="Max salary" value="{{ max_salary|default:'' }}">
+        <button type="submit">Apply Filters</button>
+    </form>
+
+    <div>
+        <a href="?sort=title">Sort by Title</a>
+        <a href="?sort=company">Sort by Company</a>
+        <a href="?sort=location">Sort by Location</a>
+        <a href="?sort=salary">Sort by Salary</a>
+    </div>
+
+    <!-- Job Listings -->
+    <ul>
+        {% for job in page_obj %}
+            <li>
+                <h2><a href="{{ job.id }}/">{{ job.title }}</a></h2>
+                <p>Company: {{ job.company }}</p>
+                <p>Location: {{ job.location }}</p>
+                <p>Salary: ${{ job.salary }}</p>
+                <p>Posted at: {{ job.posted_at }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Pagination Controls -->
+    <div>
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}&location={{ location_filter }}&company={{ company_filter }}&min_salary={{ min_salary }}&max_salary={{ max_salary }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">Previous</a>
+        {% endif %}
+    
+        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&q={{ query }}&location={{ location_filter }}&company={{ company_filter }}&min_salary={{ min_salary }}&max_salary={{ max_salary }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">Next</a>
+        {% endif %}
+    </div>
+ 
+</body>
+</html>

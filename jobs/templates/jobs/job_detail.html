@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ job.title }}</title>
+</head>
+<body>
+    <h1>{{ job.title }}</h1>
+    <p><strong>Company:</strong> {{ job.company }}</p>
+    <p><strong>Location:</strong> {{ job.location }}</p>
+    <p><strong>Salary:</strong> ${{ job.salary }}</p>
+    <p><strong>Description:</strong> {{ job.description }}</p>
+    <p><strong>Posted at:</strong> {{ job.posted_at }}</p>
+    <p><strong>Application Deadline:</strong> {{ job.application_deadline }}</p>
+
+     <!-- Edit and Delete Links -->
+{% if request.user == job.creator %}
+    <a href="{% url 'job_edit' job.id %}">Edit Job</a>
+    <form method="post" action="{% url 'job_delete' job.id %}" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit">Delete Job</button>
+    </form>
+{% endif %}
+     
+    <a href="/">Back to Job List</a>
+</body>
+</html>
